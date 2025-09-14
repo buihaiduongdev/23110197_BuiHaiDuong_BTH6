@@ -1,5 +1,7 @@
 package com.bth06.configs;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -25,8 +27,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		if (userRepository.count() == 0) {
-			// Create categories
+		if (categoryRepository.count() == 0) {
 			Category category1 = new Category();
 			category1.setCategoryName("Action");
 			category1.setImages("action.jpg");
@@ -36,11 +37,12 @@ public class DatabaseInitializer implements CommandLineRunner {
 			category2.setCategoryName("Comedy");
 			category2.setImages("comedy.jpg");
 			categoryRepository.save(category2);
+		}
 
-			// Create users
+		if (userRepository.count() == 0) {
 			User admin = new User();
 			admin.setUsername("admin");
-			admin.setPassword("admin"); // In a real application, you should hash the password
+			admin.setPassword("admin");
 			admin.setFullName("Admin");
 			admin.setEmail("admin@example.com");
 			admin.setRole("ADMIN");
@@ -48,26 +50,37 @@ public class DatabaseInitializer implements CommandLineRunner {
 
 			User user = new User();
 			user.setUsername("user");
-			user.setPassword("user"); // In a real application, you should hash the password
+			user.setPassword("user");
 			user.setFullName("User");
 			user.setEmail("user@example.com");
 			user.setRole("USER");
 			userRepository.save(user);
+		}
 
-			// Create videos
-			Video video1 = new Video();
-			video1.setTitle("Action Movie 1");
-			video1.setDescription("An exciting action movie.");
-			video1.setUrl("https://www.youtube.com/watch?v=action1");
-			video1.setCategory(category1);
-			videoRepository.save(video1);
+		if (videoRepository.count() == 0) {
+			List<Category> categories = categoryRepository.findAll();
+			Category actionCategory = categories.stream().filter(c -> c.getCategoryName().equals("Action")).findFirst()
+					.orElse(null);
+			Category comedyCategory = categories.stream().filter(c -> c.getCategoryName().equals("Comedy")).findFirst()
+					.orElse(null);
 
-			Video video2 = new Video();
-			video2.setTitle("Comedy Movie 1");
-			video2.setDescription("A hilarious comedy.");
-			video2.setUrl("https://www.youtube.com/watch?v=comedy1");
-			video2.setCategory(category2);
-			videoRepository.save(video2);
+			if (actionCategory != null) {
+				Video video1 = new Video();
+				video1.setTitle("Action Movie 1");
+				video1.setDescription("An exciting action movie.");
+				video1.setUrl("https://www.youtube.com/watch?v=action1");
+				video1.setCategory(actionCategory);
+				videoRepository.save(video1);
+			}
+
+			if (comedyCategory != null) {
+				Video video2 = new Video();
+				video2.setTitle("Comedy Movie 1");
+				video2.setDescription("A hilarious comedy.");
+				video2.setUrl("https://www.youtube.com/watch?v=comedy1");
+				video2.setCategory(comedyCategory);
+				videoRepository.save(video2);
+			}
 		}
 	}
 }
