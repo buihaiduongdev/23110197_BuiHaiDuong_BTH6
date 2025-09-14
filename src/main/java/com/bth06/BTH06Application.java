@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Bean;
 import com.bth06.configs.MySiteMeshFilter;
 
 @SpringBootApplication
-public class AnimeApplication {
+public class BTH06Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AnimeApplication.class, args);
+		SpringApplication.run(BTH06Application.class, args);
 	}
 	@Bean
     public FilterRegistrationBean<MySiteMeshFilter> siteMeshFilter() {
